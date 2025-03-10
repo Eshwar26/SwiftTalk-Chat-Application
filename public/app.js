@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileBtn = document.getElementById('file-btn');
     const fileInput = document.getElementById('file-input');
     
-    // Bootstrap Modal
+    
     const alertModal = new bootstrap.Modal(document.getElementById('alert-modal'));
     const modalTitle = document.getElementById('modal-title');
     const modalBody = document.getElementById('modal-body');
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectChat('broadcast');
     });
     
-    // Show alert modal
+    
     function showAlert(title, message) {
         modalTitle.textContent = title;
         modalBody.textContent = message;
