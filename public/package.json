@@ -1,0 +1,24 @@
+{
+    "name": "lan-chat-app",
+    "version": "1.0.0",
+    "description": "LAN Chat Application for classroom",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js",
+      "add-students": "node add-students.js"
+    },
+    "keywords": [
+      "chat",
+      "lan",
+      "websockets",
+      "classroom"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "bcrypt": "^5.1.1",
+      "express": "^4.18.2",
+      "socket.io": "^4.7.2",
+      "sqlite3": "^5.1.6"
+    }
+  }

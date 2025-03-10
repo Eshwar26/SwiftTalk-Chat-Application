@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAN Chat App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .login-card {
+            background-color: white;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .login-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #0b5ed7;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-3 {
+            margin-top: 15px;
+        }
+
+        a {
+            color: #0d6efd;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Change Password Form */
+        #change-password-screen {
+            display: none;
+        }
+
+        /* Alert Modal */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .modal-content {
+            background-color: white;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            background-color: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #dee2e6;
+            text-align: right;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 14px;
+            display: inline-block;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="container">
+        <div class="login-card">
+            <div class="login-header">
+                LAN Chat Login
+            </div>
+            <div class="login-body">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-input" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-input" id="password" required>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="#" id="show-change-password">Change Password</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Screen -->
+    <div id="change-password-screen" class="container hidden">
+        <div class="login-card">
+            <div class="login-header">
+                Change Password
+            </div>
+            <div class="login-body">
+                <form id="change-password-form">
+                    <div class="form-group">
+                        <label for="cp-username" class="form-label">Username</label>
+                        <input type="text" class="form-input" id="cp-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="current-password" class="form-label">Current Password</label>
+                        <input type="password" class="form-input" id="current-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password" class="form-label">New Password</label>
+                        <input type="password" class="form-input" id="new-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-input" id="confirm-password" required>
+                    </div>
+                    <button type="submit" class="btn">Update Password</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="#" id="back-to-login">Back to Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="hidden">
+        <!-- This screen will still use the original chat interface code -->
+    </div>
+    
+    <!-- Alert Modal -->
+    <div id="alert-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Notification</h5>
+                <button type="button" class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-body"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" id="modal-close-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keep the socket.io and app.js scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Modal handling
+        const alertModal = document.getElementById('alert-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const closeModalBtn = document.getElementById('close-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        // Screens
+        const loginScreen = document.getElementById('login-screen');
+        const changePasswordScreen = document.getElementById('change-password-screen');
+        const chatScreen = document.getElementById('chat-screen');
+
+        // Forms
+        const loginForm = document.getElementById('login-form');
+        const changePasswordForm = document.getElementById('change-password-form');
+        const showChangePasswordLink = document.getElementById('show-change-password');
+        const backToLoginLink = document.getElementById('back-to-login');
+
+        // Function to show alert
+        function showAlert(title, message) {
+            modalTitle.textContent = title;
+            modalBody.textContent = message;
+            alertModal.style.display = 'flex';
+        }
+
+        // Close modal when clicking close button
+        closeModalBtn.addEventListener('click', () => {
+            alertModal.style.display = 'none';
+        });
+
+        modalCloseBtn.addEventListener('click', () => {
+            alertModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        alertModal.addEventListener('click', (e) => {
+            if (e.target === alertModal) {
+                alertModal.style.display = 'none';
+            }
+        });
+
+        // Navigation functions
+        function showLoginScreen() {
+            loginScreen.style.display = 'flex';
+            changePasswordScreen.style.display = 'none';
+            chatScreen.style.display = 'none';
+            loginForm.reset();
+        }
+
+        function showChangePasswordScreen() {
+            loginScreen.style.display = 'none';
+            changePasswordScreen.style.display = 'flex';
+            chatScreen.style.display = 'none';
+            changePasswordForm.reset();
+        }
+
+        function showChatScreen() {
+            loginScreen.style.display = 'none';
+            changePasswordScreen.style.display = 'none';
+            chatScreen.style.display = 'block';
+        }
+
+        // Event listeners for navigation
+        showChangePasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showChangePasswordScreen();
+        });
+
+        backToLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showLoginScreen();
+        });
+
+        // Login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store user info for the main chat app
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    
+                    // Redirect to the original chat.html
+                    window.location.href = '/chat.html';
+                } else {
+                    showAlert('Login Failed', data.message || 'Invalid username or password');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Error', 'Failed to connect to server');
+            }
+        });
+
+        // Change password form submission
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('cp-username').value.trim();
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                showAlert('Password Mismatch', 'New password and confirmation do not match');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        username, 
+                        currentPassword, 
+                        newPassword 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('Success', 'Password changed successfully');
+                    showLoginScreen();
+                } else {
+                    showAlert('Failed', data.message || 'Failed to change password');
+                }
+            } catch (error) {
+                console.error('Change password error:', error);
+                showAlert('Error', 'Failed to connect to server');
+            }
+        });
+
+        // Start at login screen
+        showLoginScreen();
+    </script>
+</body>
+</html>
